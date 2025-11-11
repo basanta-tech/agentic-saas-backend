@@ -18,4 +18,4 @@ COPY . .
 EXPOSE 8000
 
 # Default command runs the project's entrypoint
-CMD ["python", "main.py"]
+CMD ["python", "src/main.py"]

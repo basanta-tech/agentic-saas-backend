@@ -13,5 +13,5 @@ services:
             - PYTHONUNBUFFERED=1
         volumes:
             - .:/app
-        command: ["python", "main.py"]
+        command: ["python", "src/main.py"]
         restart: unless-stopped
