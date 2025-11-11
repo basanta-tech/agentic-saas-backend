@@ -1,21 +1,25 @@
-FROM python:3.13-slim
+# Use official Python image
+FROM python:3.11-slim
 
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
-
+# Set working directory
 WORKDIR /app
 
-# Copy only dependency descriptor first for better caching
-COPY pyproject.toml ./
+# Install uv (modern dependency manager)
+RUN pip install --no-cache-dir uv
 
-# Install runtime dependencies declared in pyproject.toml (FastAPI, Uvicorn)
-RUN pip install --no-cache-dir fastapi uvicorn
+# Copy dependency files first (for better caching)
+COPY pyproject.toml uv.lock ./
 
-# Copy application source
+# Install dependencies using uv
+RUN uv sync --frozen --no-dev
+
+# Copy rest of the source code
 COPY . .
 
-# Optional port for FastAPI/Uvicorn
-EXPOSE 8000
+# Environment setup
+ENV PYTHONPATH=/app
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
-# Default command runs the project's entrypoint
+# Run the app
 CMD ["python", "src/main.py"]
