@@ -1,4 +1,4 @@
-from .database.core import settings
+from .db.core import settings
 
 def main():
     print("Hello from agentic-saas-backend!")

@@ -16,8 +16,6 @@ class LanguageEnum(str, Enum):
   ARABIC = "ar"
 
 class Agent(BaseModel):
-  __tablename__="agents"
-  
   agent_id: UUID = Field(default_factory=uuid4, description="Unique agent identifier")
   tenant_id: UUID = Field(..., description="Foreign key to tenants table")
   name: str = Field(..., max_length=255, description="Agent's name")
