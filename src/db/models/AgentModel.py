@@ -1,8 +1,8 @@
-import uuid
 from datetime import datetime
 from enum import Enum
 from sqlalchemy import (
     Column,
+    Integer,
     String,
     DateTime,
     Boolean,
@@ -29,8 +29,8 @@ class LanguageEnum(str, Enum):
 class AgentModel(Base):
     __tablename__ = "agents"
 
-    agent_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, nullable=False)
-    tenant_id = Column(UUID(as_uuid=True), ForeignKey("tenants.tenant_id", ondelete="CASCADE"), nullable=False)
+    agent_id = Column(Integer, primary_key=True, autoincrement=True)
+    tenant_id = Column(Integer, ForeignKey("tenants.tenant_id", ondelete="CASCADE"), nullable=False)
     name = Column(String(255), nullable=False)
     description = Column(String(1000), nullable=True)
     language = Column(SqlEnum(LanguageEnum), nullable=False)
