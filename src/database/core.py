@@ -23,7 +23,6 @@ class Settings(BaseSettings):
 
 settings = Settings()
 
-print("Database configurations: ",settings.dict())
 engine = create_engine(settings.DATABASE_URL, echo=True, pool_pre_ping=True)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
