@@ -24,9 +24,10 @@ git checkout develop
 
 # 3. Create .env file from example (macOS/Linux)
 cp .env.example .env
-# For Windows use: copy .env.example .env
+# For Windows use: 
+copy .env.example .env
 
-# 4. Create database in MySQL (ensure the name matches .env)
+# 4. Create database in MySQL (ensure the name matches .env DB_NAME)
 
 # 5. Create virtual environment and install all dependencies
 uv sync
@@ -104,7 +105,7 @@ git commit -m "feat: describe your feature"
 # 7. Push your branch to the remote repository
 git push -u origin feature/FEATURE_NAME
 
-# 8. Create a Pull Request (PR) into the 'develop' branch on upstream
+# 8. Create a Pull Request (PR) into the 'develop' branch on upstream(not your forked one but this repo develop branch)
 
 
 ## License
