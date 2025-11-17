@@ -12,6 +12,11 @@ class Settings(BaseSettings):
   DB_HOST: str | None = None
   DB_PORT: int | None = None
   DB_NAME: str | None = None
+  LIVEKIT_API_KEY: str | None = None
+  LIVEKIT_API_SECRET: str | None = None
+  LIVEKIT_URL: str | None = None
+  NEXT_PUBLIC_LIVEKIT_URL: str | None = None
+  OPENAI_API_KEY: str | None = None
 
   class Config:
     env_file = ".env"
