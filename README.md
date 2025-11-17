@@ -34,6 +34,10 @@ uv sync
 
 # 6. Apply migrations
 alembic upgrade head
+
+# 7. Start the server
+uv run uvicorn app.main:app --reload
+
 ```
 
 ## For Migrations
