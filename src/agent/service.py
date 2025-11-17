@@ -29,3 +29,16 @@ def create_agent(db: DbSession, tenant_id: int, payload) -> AgentResponse:
   db.commit()
   db.refresh(agent)
   return agent
+
+def get_agent(db: DbSession, tenant_id: int, agent_id: int) -> AgentResponse:
+  agent = (
+    db.query(AgentModel)
+    .filter(
+      AgentModel.tenant_id == tenant_id,
+      AgentModel.agent_id == agent_id
+    )
+    .first()
+  )
+  if not agent:
+    raise HTTPException(status_code=404, detail="Agent not found")
+  return agent

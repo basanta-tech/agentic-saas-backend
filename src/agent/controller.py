@@ -21,3 +21,8 @@ def list_agents(tenant_id: int, db: DbSession):
 @router.post("/", response_model=AgentResponse, status_code=status.HTTP_201_CREATED)
 def create_agent(tenant_id: int, payload: CreateAgentRequest, db: DbSession):
   return service.create_agent(db, tenant_id, payload)
+
+# GET: single agent
+@router.get("/{agent_id}", response_model=AgentResponse)
+def get_agent(tenant_id: int, agent_id: int, db: DbSession):
+  return service.get_agent(db, tenant_id, agent_id)
