@@ -23,6 +23,8 @@ class KnowledgeDocumentModel(Base):
   source_url = Column(Text)
   content = Column(Text)
   created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+  file_path = Column(String(500), nullable=True)
+  file_type = Column(String(100), nullable=True)
 
   tenant = relationship("TenantModel", backref="knowledge_documents")
 

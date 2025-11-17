@@ -12,6 +12,8 @@ class KnowledgeDocumentResponse(BaseModel):
   content: Optional[str] = None
   created_at: datetime
 
+  file_path: Optional[str] = None
+  file_type: Optional[str] = None
   agent_ids: Optional[List[int]] = None
 
   model_config = {
