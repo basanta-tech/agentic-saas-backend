@@ -31,7 +31,19 @@ else:
 
 @function_tool()
 async def query_info(query: str) -> str:
-  """Get more information about a specific topic"""
+  """Retrieve factual information from the uploaded knowledge documents.
+
+  Use this tool ONLY to look up information that may be present in the knowledge base.
+
+  When calling this tool:
+  - Rewrite the user’s question into a short, precise search query.
+  - Remove conversational phrasing or unnecessary words.
+  - Include only keywords and concepts relevant to the topic.
+  - Do NOT pass long sentences or full user questions.
+  - Keep the query minimal but highly descriptive.
+
+  This tool returns relevant text chunks from the knowledge base. Always wait for the tool response before answering the user."""
+
   query_engine = index.as_query_engine(use_async=True)
   res = await query_engine.aquery(query)
   print("Query result:", res)
@@ -40,10 +52,40 @@ async def query_info(query: str) -> str:
 class Assistant(Agent):
   def __init__(self) -> None:
     super().__init__(
-      instructions="""You are a helpful voice AI assistant.
-      You eagerly assist users with their questions by providing information from your extensive knowledge.
-      Your responses are concise, to the point, and without any complex formatting or punctuation including emojis, asterisks, or other symbols.
-      You are curious, friendly, and have a sense of humor.""",
+      instructions="""
+        You are an AI assistant with access to a retrieval tool called query_info.
+
+        Your job is to answer user questions accurately using information from the provided knowledge sources. Follow this process:
+
+        1. First, examine the user's query carefully.
+        2. Decide whether the answer may exist in the uploaded documents.
+          - If yes, call the query_info tool using a clean, concise search query.
+          - If not, answer directly without calling the tool.
+
+        3. You MUST call query_info when:
+          - The user requests factual, technical, or specific information.
+          - The question likely depends on stored knowledge, documentation, or internal details.
+          - The question cannot be reliably answered from general reasoning alone.
+
+        4. DO NOT call query_info when:
+          - The user is greeting, chatting, or making small talk.
+          - The user asks a subjective question not dependent on the documents.
+          - You already have enough information to answer without retrieval.
+
+        5. When creating the tool query:
+          - Rewrite the user’s question into a short, precise search prompt.
+          - Remove unnecessary words or conversation style.
+          - Only include information useful for retrieval.
+
+        6. After you receive the tool result:
+          - Read the retrieved context carefully.
+          - Use it to craft a clear and concise answer.
+          - If the context is insufficient or irrelevant, answer to the best of your ability and state that the document did not explicitly cover the topic.
+
+        7. Never hallucinate details that are not present in the retrieved context or your allowed knowledge.
+
+        Your final answer must be simple, clear, and free of special formatting, symbols, or emojis.
+      """,
       tools=[query_info]
     )
 
