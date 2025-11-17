@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Boolean, Column, Integer, String, DateTime
+from sqlalchemy.orm import relationship
 from datetime import datetime
 from src.db.core import Base
 
@@ -9,4 +10,5 @@ class TenantModel(Base):
   name = Column(String(255), nullable=False)
   domain = Column(String(255), nullable=True)
   plan = Column(String(50), nullable=True)
+  is_active = Column(Boolean, default=True, nullable=False)
   created_at = Column(DateTime, default=datetime.utcnow)

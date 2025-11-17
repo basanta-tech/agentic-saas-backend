@@ -42,7 +42,12 @@ uv run uvicorn app.main:app --reload
 
 ## For Migrations
 
-
+```bash
+# 1. Autogenerate migration
+alembic revision --autogenerate -m "Description for migration"
+# 2. Apply migrations(will create tables & establish required relationship in db)
+alembic upgrade head
+```
 ## Quickstart (Docker)
 
 Build and run with Docker Compose:
