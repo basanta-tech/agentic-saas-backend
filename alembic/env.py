@@ -5,7 +5,7 @@ from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 from alembic import context
 from src.db.core import Base, settings
-from src.db.models import AgentModel, TenantModel
+from src.db.entities import AgentModel, TenantModel
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 

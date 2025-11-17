@@ -1,7 +1,5 @@
 from sqlalchemy import Column, Integer, String, DateTime
-from sqlalchemy import (UUID)
 from datetime import datetime
-import uuid
 from src.db.core import Base
 
 class TenantModel(Base):
