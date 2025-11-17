@@ -110,6 +110,33 @@ git commit -m "feat: describe your feature"
 git push -u origin feature/FEATURE_NAME
 
 # 8. Create a Pull Request (PR) into the 'develop' branch on upstream(not your forked one but this repo develop branch)
+```
+
+## API Endpoints
+
+### 🏢 Tenant APIs
+
+**Base Path:** `/tenants`
+
+| Method | Endpoint      | Description                   |
+|--------|----------------|-------------------------------|
+| GET    | `/tenants/`    | Retrieves all tenants.        |
+| POST   | `/tenants/`    | Creates a new tenant.         |
+
+
+### 🧑‍💼 Agent APIs
+
+Agents are always scoped under a specific tenant.
+
+**Base Path:** `/tenants/{tenant_id}/agents`
+
+| Method | Endpoint                                      | Description                                         |
+|--------|------------------------------------------------|-----------------------------------------------------|
+| GET    | `/tenants/{tenant_id}/agents/`                 | Lists all agents for the given tenant.              |
+| POST   | `/tenants/{tenant_id}/agents/`                 | Creates a new agent under the given tenant.         |
+| GET    | `/tenants/{tenant_id}/agents/{agent_id}`       | Retrieves details of a specific agent for a tenant. |
+
+
 
 
 ## License
