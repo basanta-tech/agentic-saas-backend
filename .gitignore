@@ -10,3 +10,4 @@ wheels/
 # Virtual environments
 .venv
 .env
+/src/livekit-agent/query-engine-storage
