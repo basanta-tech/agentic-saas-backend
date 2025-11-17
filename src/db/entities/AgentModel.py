@@ -13,6 +13,7 @@ from sqlalchemy import (
 
 from sqlalchemy.orm import relationship
 from src.db.core import Base
+from .association_tables import agent_document_association
 
 
 class LanguageEnum(str, Enum):
@@ -38,3 +39,9 @@ class AgentModel(Base):
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
 
     tenant = relationship("TenantModel", backref="agents")
+
+    documents = relationship(
+        "KnowledgeDocumentModel",
+        secondary=agent_document_association,
+        back_populates="agents"
+    )
