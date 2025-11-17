@@ -36,8 +36,7 @@ uv sync
 alembic upgrade head
 
 # 7. Start the server
-uv run uvicorn app.main:app --reload
-
+uv run uvicorn src.main:app --reload
 ```
 
 ## For Migrations
@@ -45,6 +44,7 @@ uv run uvicorn app.main:app --reload
 ```bash
 # 1. Autogenerate migration
 alembic revision --autogenerate -m "Description for migration"
+
 # 2. Apply migrations(will create tables & establish required relationship in db)
 alembic upgrade head
 ```
