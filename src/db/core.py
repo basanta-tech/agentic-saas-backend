@@ -17,7 +17,8 @@ class Settings(BaseSettings):
   LIVEKIT_URL: str | None = None
   NEXT_PUBLIC_LIVEKIT_URL: str | None = None
   OPENAI_API_KEY: str | None = None
-
+  GOOGLE_API_KEY: str | None = None
+  
   class Config:
     env_file = ".env"
     env_file_encoding = "utf-8"

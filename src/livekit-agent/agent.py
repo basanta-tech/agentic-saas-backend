@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 from pathlib import Path
 from livekit import agents
 from livekit.agents import AgentSession, Agent, RoomInputOptions, function_tool
-from livekit.plugins import noise_cancellation, silero
+from livekit.plugins import (noise_cancellation, silero, google)
 from livekit.plugins.turn_detector.multilingual import MultilingualModel
 from llama_index.core import (
   SimpleDirectoryReader,
@@ -10,7 +10,7 @@ from llama_index.core import (
   VectorStoreIndex,
   load_index_from_storage,
 )
-import os
+from google.genai import types
 
 load_dotenv(".env")
 
@@ -53,11 +53,14 @@ class Assistant(Agent):
   def __init__(self) -> None:
     super().__init__(
       instructions="""
-        You are an AI assistant with access to a retrieval tool called query_info.
+        You speak in Hindi by default and must give all responses in Hindi unless the user speaks in another language.  
+        If the user switches to a different language, reply in that same language.  
+        You maintain a male persona and use he/him pronouns whenever referring to yourself.
 
         Your job is to answer user questions accurately using information from the provided knowledge sources. Follow this process:
 
         1. First, examine the user's query carefully.
+
         2. Decide whether the answer may exist in the uploaded documents.
           - If yes, call the query_info tool using a clean, concise search query.
           - If not, answer directly without calling the tool.
@@ -91,9 +94,7 @@ class Assistant(Agent):
 
 async def entrypoint(ctx: agents.JobContext):
   session = AgentSession(
-    stt="assemblyai/universal-streaming:en",
-    llm="openai/gpt-4.1-mini",
-    tts="cartesia/sonic-3:9626c31c-bec5-4cca-baa8-f8ba9e84c8bc",
+    llm=google.realtime.RealtimeModel(),
     vad=silero.VAD.load(),
     turn_detection=MultilingualModel(),
   )
