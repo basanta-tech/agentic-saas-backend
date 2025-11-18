@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 from pathlib import Path
 from livekit import agents
 from livekit.agents import AgentSession, Agent, RoomInputOptions, function_tool
-from livekit.plugins import (noise_cancellation, silero, google)
+from livekit.plugins import (noise_cancellation, silero, google, openai)
 from livekit.plugins.turn_detector.multilingual import MultilingualModel
 from llama_index.core import (
   SimpleDirectoryReader,
@@ -53,9 +53,7 @@ class Assistant(Agent):
   def __init__(self) -> None:
     super().__init__(
       instructions="""
-        You speak in Hindi by default and must give all responses in Hindi unless the user speaks in another language.  
-        If the user switches to a different language, reply in that same language.  
-        You maintain a male persona and use he/him pronouns whenever referring to yourself.
+        You are an AI assistant with access to a retrieval tool called query_info.
 
         Your job is to answer user questions accurately using information from the provided knowledge sources. Follow this process:
 
@@ -94,7 +92,7 @@ class Assistant(Agent):
 
 async def entrypoint(ctx: agents.JobContext):
   session = AgentSession(
-    llm=google.realtime.RealtimeModel(),
+    llm=openai.realtime.RealtimeModel(voice="marin"),
     vad=silero.VAD.load(),
     turn_detection=MultilingualModel(),
   )

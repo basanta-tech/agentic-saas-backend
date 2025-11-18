@@ -13,10 +13,9 @@ dependencies = [
     "slowapi>=0.1.9",
     "sqlalchemy>=2.0.44",
     "uvicorn>=0.38.0",
-    "livekit-agents[silero,turn-detector]~=1.2",
+    "livekit-agents[openai,silero,turn-detector]~=1.2",
     "livekit-plugins-noise-cancellation~=0.2",
     "livekit-plugins-google>=1.2.11",
     "llama-index>=0.14.7",
     "python-dotenv>=1.2.1",
-    
 ]
