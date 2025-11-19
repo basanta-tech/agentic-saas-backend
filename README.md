@@ -26,10 +26,22 @@ git checkout develop
 cp .env.example .env
 # For Windows use: 
 copy .env.example .env
+# update your env variables with crediantials 
 
 # 4. Create database in MySQL (ensure the name matches .env DB_NAME)
 
 # 5. Create virtual environment and install all dependencies
+# Creates an isolated Python environment to manage project dependencies separately.
+python -m venv .venv 
+
+# Activates the virtual environment. This must be done before installing dependencies.
+.venv\Scripts\activate # for windows
+source .venv/bin/activate # for macs/linux
+
+# Installs 'uv', a fast Python package installer and resolver.
+pip install uv
+
+# Installs all required dependencies listed in the project's requirements files using uv.
 uv sync
 
 # 6. Apply migrations
