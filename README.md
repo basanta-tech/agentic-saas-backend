@@ -31,17 +31,19 @@ copy .env.example .env
 # 4. Create database in MySQL (ensure the name matches .env DB_NAME)
 
 # 5. Create virtual environment and install all dependencies
-# Creates an isolated Python environment to manage project dependencies separately.
-python -m venv .venv 
+# Install the uv package manager globally (choose the command based on your OS):
 
-# Activates the virtual environment. This must be done before installing dependencies.
-.venv\Scripts\activate # for windows
-source .venv/bin/activate # for macs/linux
+# macOS (using Homebrew)
+brew install uv
 
-# Installs 'uv', a fast Python package installer and resolver.
-pip install uv
+# Windows (using PowerShell)
+iwr https://astral.sh/uv/install.ps1 -useb | iex
 
-# Installs all required dependencies listed in the project's requirements files using uv.
+# Verify installation
+uv --version
+
+# Install all required dependencies listed in the project’s requirements files
+# and create an isolated virtual environment automatically.
 uv sync
 
 # 6. Apply migrations
