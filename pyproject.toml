@@ -18,4 +18,5 @@ dependencies = [
     "livekit-plugins-google>=1.2.11",
     "llama-index>=0.14.7",
     "python-dotenv>=1.2.1",
+    "boto3>=1.41.0",
 ]
