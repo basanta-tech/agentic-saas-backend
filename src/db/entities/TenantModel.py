@@ -8,7 +8,7 @@ class TenantModel(Base):
 
   tenant_id = Column(Integer, primary_key=True, autoincrement=True)
   name = Column(String(255), nullable=False)
-  domain = Column(String(255), nullable=True)
+  domain = Column(String(255), nullable=False, index=True, unique=True)
   plan = Column(String(50), nullable=True)
   is_active = Column(Boolean, default=True, nullable=False)
   created_at = Column(DateTime, default=datetime.utcnow)
