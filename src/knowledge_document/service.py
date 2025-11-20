@@ -2,6 +2,8 @@ import os
 from pathlib import Path
 from typing import List
 from uuid import uuid4
+from aiohttp import ClientError
+import boto3
 from fastapi import HTTPException, UploadFile, status
 from fastapi.responses import JSONResponse
 from src.db.core import DbSession
@@ -9,6 +11,10 @@ from src.db.entities.AgentModel import AgentModel
 from src.db.entities.TenantModel import TenantModel
 from src.db.entities.KnowledgeDocumentModel import KnowledgeDocumentModel
 from src.knowledge_document.models import CreateKnowledgeDocumentRequest, KnowledgeDocumentResponse
+from src.db.core import settings
+from dotenv import load_dotenv
+load_dotenv()
+from src.db.core import settings
 
 
 def list_documents(db: DbSession, tenant_id: int) -> List[KnowledgeDocumentResponse]:
@@ -16,10 +22,8 @@ def list_documents(db: DbSession, tenant_id: int) -> List[KnowledgeDocumentRespo
 
   return [KnowledgeDocumentResponse.model_validate(t) for t in documents]
 
-UPLOAD_ROOT = Path(__file__).parent.parent.parent / "uploads"
-
-async def create_document( tenant_id: int, payload, file: UploadFile | None, db):
-  # Ensure tenant exists
+async def create_document(tenant_id: int, payload, file: UploadFile | None, db):
+  # Ensure tenant exists (No change here)
   tenant = db.query(TenantModel).filter_by(tenant_id=tenant_id).first()
   if not tenant:
     raise HTTPException(status_code=404, detail="Tenant not found")
@@ -27,35 +31,47 @@ async def create_document( tenant_id: int, payload, file: UploadFile | None, db)
   file_path = None
   file_type = None
 
-  print("UPLOAD_ROOT: ", UPLOAD_ROOT)
-  
   if file:
-    # Create tenant directory if not exists
-    tenant_folder = os.path.join(UPLOAD_ROOT, f"tenant_{tenant_id}")
-    print("Tenant folder location: ", tenant_folder)
-    os.makedirs(tenant_folder, exist_ok=True)
-
-    # Unique filename
     ext = __get_extension(file=file)
     unique_name = f"{uuid4()}.{ext}"
-
-    # full path
-    file_path = os.path.join(tenant_folder, unique_name)
+    
+    # We use a folder structure in S3 for organization, e.g., 'tenant_1/unique_id.ext'
+    s3_key = f"tenant_{tenant_id}/{unique_name}"
     file_type = file.content_type
 
-    # Save file locally
-    with open(file_path, "wb") as buffer:
-      buffer.write(await file.read())
-    print(f"--- SUCCESSFULLY WROTE FILE: {file_path} ---")
+    # We need to read the whole file content into the memory to pass to S3's put_object
+    file_content = await file.read()
+    
+    try:
+      # 3. Upload to S3
+      settings.s3_client.put_object(
+        Bucket=settings.S3_BUCKET_NAME,
+        Key=s3_key,
+        Body=file_content,
+        ContentType=file_type
+      )
+      print(f"--- SUCCESSFULLY WROTE FILE TO S3: s3://{settings.S3_BUCKET_NAME}/{s3_key} ---")
+      
+      # Save the S3 Key (Path) to the DB
+      # This is the reference we'll use to retrieve the file later
+      file_path = s3_key 
 
-  # Save record in DB
+    except ClientError as e:
+      print(f"S3 Upload Failed: {e}")
+      raise HTTPException(status_code=500, detail="Could not upload file to cloud storage.")
+    except Exception as e:
+      print(f"An unexpected error occurred: {e}")
+      raise HTTPException(status_code=500, detail="An unexpected error occurred during file upload.")
+
+
+  # Save record in DB (Minimal change, we use s3_key as file_path)
   new_doc = KnowledgeDocumentModel(
     tenant_id=tenant_id,
     title=payload.title,
     source_type=payload.source_type,
     source_url=payload.source_url,
     content=payload.content,
-    file_path=file_path,
+    file_path=file_path, # This now stores the S3 Key
     file_type=file_type,
   )
 
@@ -95,9 +111,7 @@ def remove_document(db: DbSession, agent_id: int, doc_id: int) -> JSONResponse:
   return JSONResponse(content={"message": "Removed successfully"})
 
 
-def __get_extension(file):
-  if not file or not file.filename:
-    print("There is no filename")
-    print(file.filename)
-    return None
-  return os.path.splitext(file.filename)[1].lstrip(".")
+def __get_extension(file: UploadFile) -> str:
+  if file.filename:
+    return file.filename.split('.')[-1]
+  return "bin" 
