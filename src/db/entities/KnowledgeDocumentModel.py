@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import UTC, datetime
 from sqlalchemy import (
   Column,
   Integer,
@@ -22,7 +22,7 @@ class KnowledgeDocumentModel(Base):
   source_type = Column(String(50))
   source_url = Column(Text)
   content = Column(Text)
-  created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+  created_at = Column(DateTime, default=datetime.now(UTC), nullable=False)
   file_path = Column(String(500), nullable=True)
   file_type = Column(String(100), nullable=True)
 

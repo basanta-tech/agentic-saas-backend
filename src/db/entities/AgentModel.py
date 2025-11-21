@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import UTC, datetime
 from enum import Enum
 from sqlalchemy import (
     Column,
@@ -36,7 +36,7 @@ class AgentModel(Base):
     description = Column(String(1000), nullable=True)
     language = Column(SqlEnum(LanguageEnum), nullable=False)
     is_active = Column(Boolean, default=True, nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    created_at = Column(DateTime, default=datetime.now(UTC), nullable=False)
 
     tenant = relationship("TenantModel", backref="agents")
 
