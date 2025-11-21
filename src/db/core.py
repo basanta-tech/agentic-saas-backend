@@ -1,8 +1,9 @@
 from typing import Annotated
 from fastapi import Depends
+from pydantic import ConfigDict
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker, Session
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from functools import cached_property
 from botocore.config import Config
 import boto3
@@ -24,10 +25,11 @@ class Settings(BaseSettings):
   AWS_DEFAULT_REGION: str | None = None
   S3_BUCKET_NAME: str | None = None
   
-  class Config:
-    env_file = ".env"
-    env_file_encoding = "utf-8"
-    extra = 'ignore'
+  model_config = SettingsConfigDict(
+    env_file=".env",
+    env_file_encoding="utf-8",
+    extra="ignore"
+  )
 
   @cached_property
   def DATABASE_URL(self) -> str:

@@ -36,7 +36,7 @@ async def create_document(tenant_id: int, payload, file: UploadFile | None, db):
     unique_name = f"{uuid4()}.{ext}"
     
     # We use a folder structure in S3 for organization, e.g., 'tenant_1/unique_id.ext'
-    s3_key = f"tenant_{tenant_id}/{unique_name}"
+    s3_key = f"tenant_{tenant_id}/uploads/{unique_name}"
     file_type = file.content_type
 
     # We need to read the whole file content into the memory to pass to S3's put_object
