@@ -21,4 +21,6 @@ dependencies = [
     "boto3>=1.41.0",
     "s3fs>=0.4.2",
     "cryptography>=46.0.3",
+    "pytest>=9.0.1",
+    "httpx>=0.28.1",
 ]

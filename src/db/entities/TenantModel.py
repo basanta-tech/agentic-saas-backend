@@ -1,6 +1,6 @@
 from sqlalchemy import Boolean, Column, Integer, String, DateTime
 from sqlalchemy.orm import relationship
-from datetime import datetime
+from datetime import UTC, datetime
 from src.db.core import Base
 
 class TenantModel(Base):
@@ -11,4 +11,4 @@ class TenantModel(Base):
   domain = Column(String(255), nullable=True)
   plan = Column(String(50), nullable=True)
   is_active = Column(Boolean, default=True, nullable=False)
-  created_at = Column(DateTime, default=datetime.utcnow)
+  created_at = Column(DateTime, default=lambda:datetime.now(UTC))
