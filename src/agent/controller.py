@@ -51,6 +51,7 @@ def deploy_agent(tenant_id: int, agent_id: int, db: DbSession):
   process_env["TENANT_ID"] = str(agent.tenant_id)
   process_env["LANG_CODE"] = str(agent.language)
   process_env["TENANT_NAME"] = str(tenant.name)
+  print("LANG_CODE: ",str(agent.language))
 
   # Define the command to run the agent
   # (This assumes your API server is run from the project root)
