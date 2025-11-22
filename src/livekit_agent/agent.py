@@ -21,6 +21,7 @@ load_dotenv(".env")
 TENANT_ID = os.getenv("TENANT_ID",1)
 AGENT_NAME = os.getenv("AGENT_NAME")
 LANG_CODE = str(os.getenv("LANG_CODE"))
+print("LANG_CODE: ",LANG_CODE)
 TENANT_NAME = str(os.getenv("TENANT_NAME"))
 print("TENANT_NAME: ",TENANT_NAME)
 
