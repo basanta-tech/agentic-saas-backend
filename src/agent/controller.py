@@ -44,16 +44,11 @@ def deploy_agent(tenant_id: int, agent_id: int, db: DbSession):
   if not agent:
     raise HTTPException(status_code=404, detail="Agent not found")
 
-  # 2. Get the current environment (which includes OPENAI_API_KEY from the server's .env)
+  # 2. Get the current environment variables
   process_env = os.environ.copy()
-  process_env["LIVEKIT_API_KEY"] = str(settings.LIVEKIT_API_KEY)
-  process_env["LIVEKIT_API_SECRET"] = str(settings.LIVEKIT_API_SECRET)
-  process_env["LIVEKIT_URL"] = str(settings.LIVEKIT_URL)
-  process_env["NEXT_PUBLIC_LIVEKIT_URL"] = str(settings.NEXT_PUBLIC_LIVEKIT_URL)
-  process_env["OPENAI_API_KEY"] = str(settings.OPENAI_API_KEY)
   process_env["AGENT_NAME"] = agent.name
-  process_env["AGENT_ID"] = str(agent.agent_id)
   process_env["TENANT_ID"] = str(agent.tenant_id)
+  process_env["LANG_CODE"] = "hi-IN"
 
   # Define the command to run the agent
   # (This assumes your API server is run from the project root)
@@ -62,7 +57,7 @@ def deploy_agent(tenant_id: int, agent_id: int, db: DbSession):
     "run", 
     "python", 
     "-m",
-    "src.livekit-agent.agent",
+    "src.livekit_agent.agent",
     "dev"
   ]
 
