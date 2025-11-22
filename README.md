@@ -67,17 +67,12 @@ alembic upgrade head
 Build and run with Docker Compose:
 
 ```bash
-docker-compose up --build
+# docker compose build
+docker-compose build
+
+# docker compose up
+docker-compose up
 ```
-
-Alternatively build and run the image directly:
-
-```bash
-docker build -t agentic-saas-backend:latest .
-docker run --rm -p 8000:8000 -e PYTHONPATH=/app agentic-saas-backend:latest
-```
-
-The project Dockerfile runs `python src/main.py` and docker-compose maps host port 8000 -> container 8000 by default.
 
 ## Environment
 
