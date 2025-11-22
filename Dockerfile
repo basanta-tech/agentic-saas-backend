@@ -23,6 +23,7 @@ RUN uv sync --frozen --no-dev
 COPY . .
 
 RUN .venv/bin/alembic  upgrade head
+RUN uv run -m src.livekit_agent.agent download-files
 
 EXPOSE 8000
 

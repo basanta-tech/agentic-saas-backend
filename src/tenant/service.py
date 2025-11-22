@@ -14,3 +14,7 @@ def create_tenant(db: Session, payload: CreateTenantRequest):
   db.commit()
   db.refresh(new_tenant)
   return TenantResponse.model_validate(new_tenant)  
+
+def get_tenant_by_id(db: Session, tenant_id: int):
+  tenant = db.query(TenantModel).filter(TenantModel.tenant_id == tenant_id).first()
+  return tenant

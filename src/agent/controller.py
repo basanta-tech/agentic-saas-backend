@@ -1,13 +1,11 @@
 from typing import List
-from fastapi import APIRouter, Depends, HTTPException, status
-from src.db.core import DbSession, get_db
-from src.db.entities.TenantModel import TenantModel
-from src.db.entities.AgentModel import AgentModel
+from fastapi import APIRouter, HTTPException, status
+from src.db.core import DbSession
 from . import service
+from src.tenant.service import get_tenant_by_id
 from .models import AgentResponse, CreateAgentRequest
 import os
 import subprocess
-from src.db.core import settings
 
 router = APIRouter(
   prefix="/tenants/{tenant_id}/agents",
@@ -37,23 +35,22 @@ def get_agent(tenant_id: int, agent_id: int, db: DbSession):
 )
 def deploy_agent(tenant_id: int, agent_id: int, db: DbSession):
   """
-  Fetches an agent's config from the DB and launches it as a new process.
+  Fetches an agent's, tenant's config from the DB and launches it as a new process.
   """
+  tenant = get_tenant_by_id(db, tenant_id)
+  if not tenant:
+    raise HTTPException(status_code=404, detail="Tenant not found")
   
   agent = service.get_agent(db, tenant_id, agent_id)
   if not agent:
     raise HTTPException(status_code=404, detail="Agent not found")
 
-  # 2. Get the current environment (which includes OPENAI_API_KEY from the server's .env)
+  # 2. Get the current environment variables
   process_env = os.environ.copy()
-  process_env["LIVEKIT_API_KEY"] = str(settings.LIVEKIT_API_KEY)
-  process_env["LIVEKIT_API_SECRET"] = str(settings.LIVEKIT_API_SECRET)
-  process_env["LIVEKIT_URL"] = str(settings.LIVEKIT_URL)
-  process_env["NEXT_PUBLIC_LIVEKIT_URL"] = str(settings.NEXT_PUBLIC_LIVEKIT_URL)
-  process_env["OPENAI_API_KEY"] = str(settings.OPENAI_API_KEY)
-  process_env["AGENT_NAME"] = agent.name
-  process_env["AGENT_ID"] = str(agent.agent_id)
+  process_env["AGENT_NAME"] = str(agent.name)
   process_env["TENANT_ID"] = str(agent.tenant_id)
+  process_env["LANG_CODE"] = str(agent.language)
+  process_env["TENANT_NAME"] = str(tenant.name)
 
   # Define the command to run the agent
   # (This assumes your API server is run from the project root)
@@ -62,7 +59,7 @@ def deploy_agent(tenant_id: int, agent_id: int, db: DbSession):
     "run", 
     "python", 
     "-m",
-    "src.livekit-agent.agent",
+    "src.livekit_agent.agent",
     "dev"
   ]
 
