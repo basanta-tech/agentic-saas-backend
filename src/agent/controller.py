@@ -53,13 +53,16 @@ def deploy_agent(tenant_id: int, agent_id: int, db: DbSession):
   process_env["OPENAI_API_KEY"] = str(settings.OPENAI_API_KEY)
   process_env["AGENT_NAME"] = agent.name
   process_env["AGENT_ID"] = str(agent.agent_id)
+  process_env["TENANT_ID"] = str(agent.tenant_id)
 
   # Define the command to run the agent
   # (This assumes your API server is run from the project root)
   command = [
     "uv", 
     "run", 
-    "src/livekit-agent/agent.py",
+    "python", 
+    "-m",
+    "src.livekit-agent.agent",
     "dev"
   ]
 
