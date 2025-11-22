@@ -15,8 +15,8 @@ class TenantResponse(BaseModel):
 
 class CreateTenantRequest(BaseModel):
   name: str = Field(..., min_length=1, max_length=255)
-  domain: str | None = Field(None, max_length=255)
-  plan: str | None = Field(None, max_length=50)
+  domain: str = Field(..., max_length=255)
+  plan: str = Field(..., max_length=50)
 
 
 class UpdateTenantRequest(BaseModel):
@@ -24,3 +24,8 @@ class UpdateTenantRequest(BaseModel):
   domain: str | None = Field(None, max_length=255)
   plan: str | None = Field(None, max_length=50)
 
+
+class TenantErrorResponse(BaseModel):
+  success: bool = False
+  message: str
+  details: str | None = None
