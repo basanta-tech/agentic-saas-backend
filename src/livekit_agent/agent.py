@@ -22,6 +22,7 @@ TENANT_ID = os.getenv("TENANT_ID",1)
 AGENT_NAME = os.getenv("AGENT_NAME")
 LANG_CODE = str(os.getenv("LANG_CODE"))
 TENANT_NAME = str(os.getenv("TENANT_NAME"))
+print("TENANT_NAME: ",TENANT_NAME)
 
 S3_BUCKET_NAME = settings.S3_BUCKET_NAME
 S3_INPUT_DIR = f"{S3_BUCKET_NAME}/tenant_{TENANT_ID}/uploads/"
