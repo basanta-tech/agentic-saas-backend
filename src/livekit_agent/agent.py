@@ -50,7 +50,7 @@ def load_documents_from_s3() -> List[Document]:
 
 # check if storage already exists
 THIS_DIR = Path(__file__).parent
-PERSIST_DIR = THIS_DIR / "query-engine-storage"
+PERSIST_DIR = THIS_DIR / "query-engine-storage" / f"tenant_{TENANT_ID}"
 
 if not PERSIST_DIR.exists():
   print("Storage not found. Creating index from S3 documents...")
