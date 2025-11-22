@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from pathlib import Path
 from livekit import agents
 from livekit.agents import AgentSession, Agent, RoomInputOptions, function_tool
-from livekit.plugins import (noise_cancellation, silero, google, openai)
+from livekit.plugins import (noise_cancellation, silero, google, openai, sarvam)
 from livekit.plugins.turn_detector.multilingual import MultilingualModel
 import s3fs
 from src.db.core import settings
@@ -18,8 +18,12 @@ from llama_index.core import (
 from google.genai import types
 
 load_dotenv(".env")
-TENANT_ID = os.getenv("TENANT_ID")
+TENANT_ID = os.getenv("TENANT_ID",1)
 AGENT_NAME = os.getenv("AGENT_NAME")
+LANG_CODE = str(os.getenv("LANG_CODE"))
+print("LANG_CODE: ",LANG_CODE)
+TENANT_NAME = str(os.getenv("TENANT_NAME"))
+print("TENANT_NAME: ",TENANT_NAME)
 
 S3_BUCKET_NAME = settings.S3_BUCKET_NAME
 S3_INPUT_DIR = f"{S3_BUCKET_NAME}/tenant_{TENANT_ID}/uploads/"
@@ -48,7 +52,7 @@ def load_documents_from_s3() -> List[Document]:
 
 # check if storage already exists
 THIS_DIR = Path(__file__).parent
-PERSIST_DIR = THIS_DIR / "query-engine-storage"
+PERSIST_DIR = THIS_DIR / "query-engine-storage" / f"tenant_{TENANT_ID}"
 
 if not PERSIST_DIR.exists():
   print("Storage not found. Creating index from S3 documents...")
@@ -93,49 +97,61 @@ async def query_info(query: str) -> str:
 class Assistant(Agent):
   def __init__(self) -> None:
     super().__init__(
-      instructions="""
-        You are an AI assistant with access to a retrieval tool called query_info.
+      instructions=f"""
+        You are a female AI assistant(anushka) with access to a retrieval tool called query_info.
+        You must respond **exclusively in the language specified by {LANG_CODE}**.
+        All responses, tool queries, and internal reasoning must use only {LANG_CODE}.
 
-        Your job is to answer user questions accurately using information from the provided knowledge sources. Follow this process:
+        Follow this process:
 
-        1. First, examine the user's query carefully.
+        1. Examine the user's query carefully.
 
-        2. Decide whether the answer may exist in the uploaded documents.
-          - If yes, call the query_info tool using a clean, concise search query.
-          - If not, answer directly without calling the tool.
+        2. Determine whether the answer may exist in the uploaded documents.
+          - If yes, call the query_info tool using a short, precise search query written in {LANG_CODE}.
+          - If not, answer directly in {LANG_CODE} without calling the tool.
 
         3. You MUST call query_info when:
-          - The user requests factual, technical, or specific information.
+          - The user asks for factual, technical, or specific information.
           - The question likely depends on stored knowledge, documentation, or internal details.
-          - The question cannot be reliably answered from general reasoning alone.
+          - The answer cannot be reliably produced from general reasoning alone.
 
         4. DO NOT call query_info when:
           - The user is greeting, chatting, or making small talk.
-          - The user asks a subjective question not dependent on the documents.
-          - You already have enough information to answer without retrieval.
+          - The question is subjective or not based on documentation.
+          - You already have enough information to answer confidently.
 
-        5. When creating the tool query:
-          - Rewrite the user’s question into a short, precise search prompt.
-          - Remove unnecessary words or conversation style.
-          - Only include information useful for retrieval.
+        5. When creating a tool query:
+          - Rewrite the user’s question into a concise, keyword-focused search prompt.
+          - Remove polite wording, conversational filler, and unnecessary details.
+          - Use only terms useful for retrieval.
+          - The query must be written entirely in {LANG_CODE}.
 
-        6. After you receive the tool result:
+        6. After receiving the tool result:
           - Read the retrieved context carefully.
-          - Use it to craft a clear and concise answer.
-          - If the context is insufficient or irrelevant, answer to the best of your ability and state that the document did not explicitly cover the topic.
+          - Use it to create a clear, concise answer in {LANG_CODE}.
+          - If the documents do not explicitly cover the topic, answer in {LANG_CODE} and state that the information was not found.
 
-        7. Never hallucinate details that are not present in the retrieved context or your allowed knowledge.
+        7. Never invent or hallucinate information not supported by the retrieved context or your allowed knowledge.
 
-        Your final answer must be simple, clear, and free of special formatting, symbols, or emojis.
+        8. Your final answer must always be simple, direct, written only in {LANG_CODE}, and free of special symbols, emojis, or unusual formatting.
+
       """,
       tools=[query_info]
     )
 
 async def entrypoint(ctx: agents.JobContext):
   session = AgentSession(
-    stt="assemblyai/universal-streaming:en",
+    stt=sarvam.STT(
+      language=LANG_CODE,
+      model="saarika:v2.5",
+    ),
     llm="openai/gpt-4.1-mini",
-    tts="cartesia/sonic-3:9626c31c-bec5-4cca-baa8-f8ba9e84c8bc",
+    tts=sarvam.TTS(
+      target_language_code=LANG_CODE,
+      speaker="anushka",
+      pace=1.05,
+      enable_preprocessing=True
+    ),
     vad=silero.VAD.load(),
     turn_detection=MultilingualModel(),
   )
@@ -150,7 +166,12 @@ async def entrypoint(ctx: agents.JobContext):
   )
 
   await session.generate_reply(
-    instructions="Greet the user and offer your assistance."
+    instructions=f"""
+     Greet the user warmly in {LANG_CODE} on behalf of **{TENANT_NAME}**.
+      Introduce yourself as Anushka, a female assistant.
+      State that you are ready to answer questions based on **{TENANT_NAME}'s** uploaded documents.
+      Ensure you use feminine grammatical gender (e.g., 'sakti hoon') for yourself.
+    """
   )
 
 

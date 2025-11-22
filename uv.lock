@@ -14,9 +14,10 @@ dependencies = [
     { name = "alembic" },
     { name = "boto3" },
     { name = "cryptography" },
+    { name = "docx2txt" },
     { name = "fastapi" },
     { name = "httpx" },
-    { name = "livekit-agents", extra = ["openai", "silero", "turn-detector"] },
+    { name = "livekit-agents", extra = ["openai", "sarvam", "silero", "turn-detector"] },
     { name = "livekit-plugins-google" },
     { name = "livekit-plugins-noise-cancellation" },
     { name = "llama-index" },
@@ -36,9 +37,10 @@ requires-dist = [
     { name = "alembic", specifier = ">=1.17.1" },
     { name = "boto3", specifier = ">=1.41.0" },
     { name = "cryptography", specifier = ">=46.0.3" },
+    { name = "docx2txt", specifier = ">=0.9" },
     { name = "fastapi", specifier = ">=0.121.1" },
     { name = "httpx", specifier = ">=0.28.1" },
-    { name = "livekit-agents", extras = ["openai", "silero", "turn-detector"], specifier = "~=1.2" },
+    { name = "livekit-agents", extras = ["openai", "sarvam", "silero", "turn-detector"], specifier = "~=1.2" },
     { name = "livekit-plugins-google", specifier = ">=1.2.11" },
     { name = "livekit-plugins-noise-cancellation", specifier = "~=0.2" },
     { name = "llama-index", specifier = ">=0.14.7" },
@@ -555,6 +557,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/b2/9d/c3b43da9515bd270df0f80548d9944e389870713cc1fe2b8fb35fe2bcefd/docstring_parser-0.17.0.tar.gz", hash = "sha256:583de4a309722b3315439bb31d64ba3eebada841f2e2cee23b99df001434c912", size = 27442, upload-time = "2025-07-21T07:35:01.868Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/55/e2/2537ebcff11c1ee1ff17d8d0b6f4db75873e3b0fb32c2d4a2ee31ecb310a/docstring_parser-0.17.0-py3-none-any.whl", hash = "sha256:cf2569abd23dce8099b300f9b4fa8191e9582dda731fd533daf54c4551658708", size = 36896, upload-time = "2025-07-21T07:35:00.684Z" },
+]
+
+[[package]]
+name = "docx2txt"
+version = "0.9"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/ea/07/4486a038624e885e227fe79111914c01f55aa70a51920ff1a7f2bd216d10/docx2txt-0.9.tar.gz", hash = "sha256:18013f6229b14909028b19aa7bf4f8f3d6e4632d7b089ab29f7f0a4d1f660e28", size = 3613, upload-time = "2025-03-24T20:59:25.21Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/d6/51/756e71bec48ece0ecc2a10e921ef2756e197dcb7e478f2b43673b6683902/docx2txt-0.9-py3-none-any.whl", hash = "sha256:e3718c0653fd6f2fcf4b51b02a61452ad1c38a4c163bcf0a6fd9486cd38f529a", size = 4025, upload-time = "2025-03-24T20:59:24.394Z" },
 ]
 
 [[package]]
@@ -1165,6 +1176,9 @@ images = [
 openai = [
     { name = "livekit-plugins-openai" },
 ]
+sarvam = [
+    { name = "livekit-plugins-sarvam" },
+]
 silero = [
     { name = "livekit-plugins-silero" },
 ]
@@ -1242,6 +1256,19 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/91/75/d99dfef21f2dfd90b1600feccd05f6213bdc4e685d11fac7a29091437be1/livekit_plugins_openai-1.3.2.tar.gz", hash = "sha256:7d2d1221cbb5674a1dc650475f513ff65d0b17e70aa937c620b5f6b85ab8e7ee", size = 45468, upload-time = "2025-11-17T06:39:39.584Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/8b/41/2baa0dab5817a6365e6b59059e918abe498c03c9f31202d52913d8ea1b2b/livekit_plugins_openai-1.3.2-py3-none-any.whl", hash = "sha256:6c227c202690c7802b55828f807cc371f79ef9e51366d1a157285602de05fab0", size = 52276, upload-time = "2025-11-17T06:39:38.283Z" },
+]
+
+[[package]]
+name = "livekit-plugins-sarvam"
+version = "1.3.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "livekit-agents", extra = ["codecs"] },
+    { name = "numpy" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/52/27/1b10143145dc4f84ee930f6da3728f110fb5a19990dac62e7bc9130d55bd/livekit_plugins_sarvam-1.3.2.tar.gz", hash = "sha256:5fbf368b676941a584392b10dad2682c5d099242c66f6125624aed7cdc57682d", size = 18169, upload-time = "2025-11-17T06:39:45.637Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/f4/7e/01e4b9ba53a3fb05178c422dcb370426d2098175f8aa61a56ea7ef67fb89/livekit_plugins_sarvam-1.3.2-py3-none-any.whl", hash = "sha256:15ba60d573a37313d93449c27f942536b4bf0c76347a9bb0cded24ee442515cf", size = 19764, upload-time = "2025-11-17T06:39:44.872Z" },
 ]
 
 [[package]]
