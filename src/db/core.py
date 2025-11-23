@@ -25,6 +25,7 @@ class Settings(BaseSettings):
   AWS_DEFAULT_REGION: str | None = None
   S3_BUCKET_NAME: str | None = None
   SARVAM_API_KEY: str | None = None
+  FRONTEND_URL: str | None = None
   
   model_config = SettingsConfigDict(
     env_file=".env",

@@ -14,7 +14,6 @@ from src.knowledge_document.models import CreateKnowledgeDocumentRequest, Knowle
 from src.db.core import settings
 from dotenv import load_dotenv
 load_dotenv()
-from src.db.core import settings
 
 
 def list_documents(db: DbSession, tenant_id: int) -> List[KnowledgeDocumentResponse]:

@@ -145,7 +145,9 @@ async def entrypoint(ctx: agents.JobContext):
       language=LANG_CODE,
       model="saarika:v2.5",
     ),
-    llm="openai/gpt-4.1-mini",
+    llm=openai.LLM(
+        model="gpt-4o-mini"
+    ),
     tts=sarvam.TTS(
       target_language_code=LANG_CODE,
       speaker="anushka",
