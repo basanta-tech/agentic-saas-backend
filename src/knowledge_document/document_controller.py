@@ -27,3 +27,12 @@ async def create_document(
   payload_model = CreateKnowledgeDocumentRequest(**payload_data)
 
   return await service.create_document(tenant_id, payload_model, file, db)
+
+
+@router.delete("/{document_id}", status_code=status.HTTP_200_OK)
+async def delete_document(
+  tenant_id: int,
+  document_id: int,
+  db: DbSession
+):
+  return await service.delete_document(tenant_id, document_id, db)
