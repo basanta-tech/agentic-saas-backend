@@ -35,4 +35,4 @@ async def delete_document(
   document_id: int,
   db: DbSession
 ):
-  return await service.delete_document(tenant_id, document_id, db)
+  return await service.delete_document(db, tenant_id, document_id)
