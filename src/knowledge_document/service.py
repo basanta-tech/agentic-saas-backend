@@ -122,7 +122,7 @@ async def delete_document(tenant_id: int, document_id: int, db):
   if not tenant:
     raise HTTPException(status_code=404, detail="Tenant not found")
 
-  document = db.query(KnowledgeDocumentModel).filter_by(id=document_id, tenant_id=tenant_id).first()
+  document = db.query(KnowledgeDocumentModel).filter_by(doc_id=document_id, tenant_id=tenant_id).first()
 
   if not document:
     raise HTTPException(status_code=404, detail="Document not found")
