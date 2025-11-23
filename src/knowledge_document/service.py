@@ -1,3 +1,5 @@
+from io import BytesIO
+import mimetypes
 import os
 from pathlib import Path
 from typing import List
@@ -5,7 +7,7 @@ from uuid import uuid4
 from aiohttp import ClientError
 import boto3
 from fastapi import HTTPException, UploadFile, status
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 from src.db.core import DbSession
 from src.db.entities.AgentModel import AgentModel
 from src.db.entities.TenantModel import TenantModel
@@ -159,3 +161,49 @@ async def delete_document(db: DbSession, tenant_id: int, document_id: int):
   db.commit()
 
   return {"message": f"Document deleted with id {document_id}"}
+
+
+async def download_document(db: DbSession, tenant_id: int, document_id: int):
+  tenant = (
+      db.query(TenantModel)
+      .filter(TenantModel.tenant_id == tenant_id)
+      .first()
+  )
+  if tenant is None:
+      raise HTTPException(status_code=404, detail="Tenant not found")
+
+  document = (
+      db.query(KnowledgeDocumentModel)
+      .filter(
+          KnowledgeDocumentModel.doc_id == document_id,
+          KnowledgeDocumentModel.tenant_id == tenant_id,
+      )
+      .first()
+  )
+
+  if document is None:
+      raise HTTPException(status_code=404, detail="Document not found")
+
+  file_path = str(document.file_path)
+
+  try:
+    s3_obj = settings.s3_client.get_object(
+      Bucket=settings.S3_BUCKET_NAME,
+      Key=file_path
+    )
+    file_bytes: bytes = s3_obj["Body"].read()
+
+  except ClientError as e:
+    print(f"S3 Download Failed: {e}")
+    raise HTTPException(status_code=404, detail="File not found in cloud storage")
+
+  mime, _ = mimetypes.guess_type(file_path)
+  content_type = mime or "application/octet-stream"
+
+  return StreamingResponse(
+    BytesIO(file_bytes),
+    media_type=content_type,
+    headers={
+      "Content-Disposition": f'attachment; filename="{file_path.split("/")[-1]}"'
+    }
+  )
