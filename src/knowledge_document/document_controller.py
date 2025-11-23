@@ -36,3 +36,12 @@ async def delete_document(
   db: DbSession
 ):
   return await service.delete_document(db, tenant_id, document_id)
+
+
+@router.get("/{document_id}/download")
+async def download_document(
+  tenant_id: int,
+  document_id: int,
+  db: DbSession
+):
+    return await service.download_document(db, tenant_id, document_id)
