@@ -114,3 +114,31 @@ def __get_extension(file: UploadFile) -> str:
   if file.filename:
     return file.filename.split('.')[-1]
   return "bin" 
+
+
+async def delete_document(tenant_id: int, document_id: int, db):
+  tenant = db.query(TenantModel).filter_by(tenant_id=tenant_id).first()
+  if not tenant:
+    raise HTTPException(status_code=404, detail="Tenant not found")
+
+  document = db.query(KnowledgeDocumentModel).filter_by(id=document_id, tenant_id=tenant_id).first()
+
+  if not document:
+    raise HTTPException(status_code=404, detail="Document not found")
+
+  if document.file_path:
+    try:   
+      settings.s3_client.delete_object(Bucket=settings.S3_BUCKET_NAME,Key=document.file_path)
+      print(f"DELETED FILE FROM S3: s3://{settings.S3_BUCKET_NAME}/{document.file_path}")
+
+    except ClientError as e:
+      print(f"S3 Delete Failed: {e}")
+      raise HTTPException(status_code=500, detail="Could not delete file from cloud storage.")
+    except Exception as e:
+      print(f"Unexpected error deleting file: {e}")
+      raise HTTPException(status_code=500, detail="Unexpected error during S3 deletion.")
+
+  # 4. Delete from DB 
+  db.delete(document)
+  db.commit()
+  return {"message": "Document deleted successfully"}
