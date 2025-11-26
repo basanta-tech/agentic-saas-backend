@@ -19,7 +19,7 @@ from google.genai import types
 
 load_dotenv(".env")
 TENANT_ID = os.getenv("TENANT_ID",1)
-AGENT_NAME = os.getenv("AGENT_NAME")
+AGENT_NAME = str(os.getenv("AGENT_NAME"))
 LANG_CODE = str(os.getenv("LANG_CODE"))
 print("LANG_CODE: ",LANG_CODE)
 TENANT_NAME = str(os.getenv("TENANT_NAME"))
@@ -173,4 +173,4 @@ async def entrypoint(ctx: agents.JobContext):
 
 
 if __name__ == "__main__":
-  agents.cli.run_app(agents.WorkerOptions(entrypoint_fnc=entrypoint))
+  agents.cli.run_app(agents.WorkerOptions(entrypoint_fnc=entrypoint,agent_name=AGENT_NAME))
