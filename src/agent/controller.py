@@ -80,3 +80,9 @@ def deploy_agent(tenant_id: int, agent_id: int, db: DbSession):
       status_code=500, 
       detail=f"Failed to launch agent process: {e}"
     )
+  
+# delete agent
+@router.delete("/{agent_id}", status_code=status.HTTP_200_OK)
+def delete_agent(tenant_id: int, agent_id: int, db: DbSession):
+  service.delete_agent(db, tenant_id, agent_id)
+  return {"message" : "Deleted successfully"}
