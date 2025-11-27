@@ -2,6 +2,7 @@ from io import BytesIO
 import mimetypes
 import os
 from pathlib import Path
+import shutil
 from typing import List
 from uuid import uuid4
 from aiohttp import ClientError
@@ -207,3 +208,17 @@ async def download_document(db: DbSession, tenant_id: int, document_id: int):
       "Content-Disposition": f'attachment; filename="{file_path.split("/")[-1]}"'
     }
   )
+
+def __remove_query_engine_storage(tenant_id):
+  # Get the directory of the current file (src/knowledge_document)
+  current_dir = os.path.dirname(os.path.abspath(__file__))
+  # Navigate up to src and then to livekit_agent
+  folder_path = os.path.join(current_dir, "..", "livekit_agent", "query-engine-storage", f"tenant_{tenant_id}")
+  folder_path = os.path.normpath(folder_path)
+  
+  print("Folder Path: ", folder_path)
+  if os.path.exists(folder_path):
+    shutil.rmtree(folder_path)
+    print("Folder deleted!")
+  else:
+    print("Folder does not exist.")
