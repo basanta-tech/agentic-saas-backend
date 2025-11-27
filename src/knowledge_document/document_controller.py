@@ -1,3 +1,5 @@
+import os
+import shutil
 from typing import Annotated, List
 from fastapi import APIRouter, Depends, File, Form, UploadFile, status
 from src.db.core import DbSession
@@ -22,7 +24,7 @@ async def create_document(
   file: Annotated[UploadFile | None, File()],
   db: DbSession
 ):
-  # Convert JSON string to Pydantic model
+  __remove_query_engine_storage(tenant_id)
   payload_data = json.loads(payload)
   payload_model = CreateKnowledgeDocumentRequest(**payload_data)
 
@@ -35,6 +37,7 @@ async def delete_document(
   document_id: int,
   db: DbSession
 ):
+  __remove_query_engine_storage(tenant_id)
   return await service.delete_document(db, tenant_id, document_id)
 
 
@@ -44,4 +47,19 @@ async def download_document(
   document_id: int,
   db: DbSession
 ):
-    return await service.download_document(db, tenant_id, document_id)
+  return await service.download_document(db, tenant_id, document_id)
+
+
+def __remove_query_engine_storage(tenant_id):
+  # Get the directory of the current file (src/knowledge_document)
+  current_dir = os.path.dirname(os.path.abspath(__file__))
+  # Navigate up to src and then to livekit_agent
+  folder_path = os.path.join(current_dir, "..", "livekit_agent", "query-engine-storage", f"tenant_{tenant_id}")
+  folder_path = os.path.normpath(folder_path)
+  
+  print("Folder Path: ", folder_path)
+  if os.path.exists(folder_path):
+    shutil.rmtree(folder_path)
+    print("Folder deleted!")
+  else:
+    print("Folder does not exist.")
