@@ -22,7 +22,7 @@ async def create_document(
   file: Annotated[UploadFile | None, File()],
   db: DbSession
 ):
-  # Convert JSON string to Pydantic model
+  service.__remove_query_engine_storage(tenant_id)
   payload_data = json.loads(payload)
   payload_model = CreateKnowledgeDocumentRequest(**payload_data)
 
@@ -35,6 +35,7 @@ async def delete_document(
   document_id: int,
   db: DbSession
 ):
+  service.__remove_query_engine_storage(tenant_id)
   return await service.delete_document(db, tenant_id, document_id)
 
 
@@ -44,4 +45,4 @@ async def download_document(
   document_id: int,
   db: DbSession
 ):
-    return await service.download_document(db, tenant_id, document_id)
+  return await service.download_document(db, tenant_id, document_id)
