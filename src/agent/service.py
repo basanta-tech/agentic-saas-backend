@@ -55,3 +55,13 @@ def get_agent_by_id(db: DbSession, agent_id: int) -> AgentResponse:
   if not agent:
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Agent not found")
   return agent
+
+
+def delete_agent(db: DbSession, tenant_id: int, agent_id: int):
+  agent = (db.query(AgentModel).filter(AgentModel.tenant_id == tenant_id, AgentModel.agent_id == agent_id).first())
+
+  if not agent:
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Agent not found")
+
+  db.delete(agent)
+  db.commit()
